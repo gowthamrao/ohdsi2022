@@ -7,17 +7,25 @@ library(magrittr)
 # what is the name of the schema you want to upload to?
 resultsSchema <- 'ohdsi2022Tut' # change to your schema
 
+# sqlCreate <-
+#   paste0("SELECT CREATE_SCHEMA('@results_database_schema');")
+# DatabaseConnector::renderTranslateExecuteSql(
+#   connection = DatabaseConnector::connect(connectionDetails = connectionDetails),
+#   sql = sqlCreate,
+#   results_database_schema = resultsSchema
+# )
+
 # Postgres server: connection details to OHDSI Phenotype library. Please change to your postgres connection details
 connectionDetails <- DatabaseConnector::createConnectionDetails(
   dbms = Sys.getenv("shinydbDbms", unset = "postgresql"),
   server = paste(
-    Sys.getenv("shinydbServer"),
-    Sys.getenv("shinydbDatabase"),
+    Sys.getenv("phenotypeLibraryServer"),
+    Sys.getenv("phenotypeLibrarydb"),
     sep = "/"
   ),
-  port = Sys.getenv("shinydbPort"),
-  user = Sys.getenv("shinydbUser"),
-  password = Sys.getenv("shinydbPW")
+  port = Sys.getenv("phenotypeLibraryDbPort"),
+  user = Sys.getenv("phenotypeLibrarydbUser"),
+  password = Sys.getenv("phenotypeLibrarydbPw")
 )
 
 
@@ -76,3 +84,21 @@ for (i in (1:length(tablesInResultsDataModel))) {
     table_name = tablesInResultsDataModel[[i]]
   )
 }
+
+sqlGrant <-
+  "grant select on all tables in schema @results_database_schema to phenotypelibrary;"
+DatabaseConnector::renderTranslateExecuteSql(
+  connection = DatabaseConnector::connect(connectionDetails = connectionDetails),
+  sql = sqlGrant,
+  results_database_schema = resultsSchema
+)
+
+sqlGrantTable <- "GRANT ALL ON  @results_database_schema.annotation TO  phenotypelibrary;
+                   GRANT ALL ON  @results_database_schema.annotation_link TO  phenotypelibrary;
+                   GRANT ALL ON  @results_database_schema.annotation_attributes TO  phenotypelibrary;"
+
+DatabaseConnector::renderTranslateExecuteSql(
+  connection = DatabaseConnector::connect(connectionDetails = connectionDetails),
+  sql = sqlGrantTable,
+  results_database_schema = resultsSchema
+)
