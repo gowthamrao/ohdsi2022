@@ -1,19 +1,7 @@
 remotes::install_github("OHDSI/Hydra")
 outputFolder <- "d:/temp/output"  # location where you study package will be created
 
-baseUrl <- "https://atlas.ohdsi.org/WebAPI"
-ROhdsiWebApi::setAuthHeader(baseUrl = baseUrl, 
-                            authHeader = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzY2h1ZW1pZXN5c3RlbUBnbWFpbC5jb20iLCJTZXNzaW9uLUlEIjpudWxsLCJleHAiOjE2NjQ4NjY5Mjl9.tmNp2_Y2kMZVXyjphgrPJfESmtOoKx6EH_3NaGf6QMBsBjPl4IsJZtnZcFIWgroRrOAStrlniC5zQcQLYl1hTg")
 
-cohortDefinitionsMetadata <- ROhdsiWebApi::getCohortDefinitionsMetaData(baseUrl = baseUrl)
-targetCohortIds <- cohortDefinitionsMetadata %>% 
-  dplyr::filter(stringr::str_detect(string = .data$name, pattern = stringr::fixed("[OHDSI2022]"))) %>% 
-  dplyr::filter(stringr::str_detect(string = .data$name, pattern = stringr::fixed("COPY OF"), negate = TRUE)) %>% 
-  dplyr::pull(.data$id) %>% 
-  unique()
-
-
-########## Please populate the information below #####################
 version <- "v0.1.0"
 name <- "OHDSI Tutorial 2022 Cohort Diangostics"
 packageName <- "ohdsiTutorial2022CohortDiagnostics"
@@ -27,8 +15,18 @@ organizationName <- "OHDSI"
 description <- "Cohort diagnostics on Cohorts for OHDSI Tutorial."
 
 
+# atlas 1 - atlas.ohdsi.org
+baseUrl <- "https://atlas.ohdsi.org/WebAPI"
+ROhdsiWebApi::setAuthHeader(baseUrl = baseUrl, 
+                            authHeader = "Bearer ")
 
-################# end of user input ##############
+cohortDefinitionsMetadata <- ROhdsiWebApi::getCohortDefinitionsMetaData(baseUrl = baseUrl)
+targetCohortIds <- cohortDefinitionsMetadata %>% 
+  dplyr::filter(stringr::str_detect(string = .data$name, pattern = stringr::fixed("[OHDSI2022]"))) %>% 
+  dplyr::filter(stringr::str_detect(string = .data$name, pattern = stringr::fixed("COPY OF"), negate = TRUE)) %>% 
+  dplyr::pull(.data$id) %>% 
+  unique()
+
 studyCohorts <-  cohortDefinitionsMetadata %>% 
         dplyr::filter(.data$id %in% targetCohortIds)
 
@@ -47,6 +45,39 @@ for (i in (1:nrow(studyCohorts))) {
                 expression = cohortDefinition$expression
         )
 }
+
+
+
+
+# atlas 2
+baseUrl <- Sys.getenv("BaseUrl")
+ROhdsiWebApi::authorizeWebApi(baseUrl = baseUrl, authMethod = "windows")
+cohortDefinitionsMetadata <- ROhdsiWebApi::getCohortDefinitionsMetaData(baseUrl = baseUrl)
+targetCohortIds <- cohortDefinitionsMetadata %>% 
+  dplyr::filter(stringr::str_detect(string = .data$name, pattern = stringr::fixed("[OHDSI2022]"))) %>% 
+  dplyr::filter(stringr::str_detect(string = .data$name, pattern = stringr::fixed("COPY OF"), negate = TRUE)) %>% 
+  dplyr::pull(.data$id) %>% 
+  unique()
+
+studyCohorts <-  cohortDefinitionsMetadata %>% 
+  dplyr::filter(.data$id %in% targetCohortIds)
+
+j = i
+# compile them into a data table
+for (i in (1:nrow(studyCohorts))) {
+  cohortDefinition <-
+    ROhdsiWebApi::getCohortDefinition(cohortId = studyCohorts$id[[i]],
+                                      baseUrl = baseUrl)
+  cohortDefinitionsArray[[j+i]] <- list(
+    id = studyCohorts$id[[i]],
+    createdDate = studyCohorts$createdDate[[i]],
+    modifiedDate = studyCohorts$createdDate[[i]],
+    logicDescription = studyCohorts$description[[i]],
+    name = stringr::str_trim(stringr::str_squish(cohortDefinition$name)),
+    expression = cohortDefinition$expression
+  )
+}
+
 
 tempFolder <- tempdir()
 unlink(x = tempFolder, recursive = TRUE, force = TRUE)
