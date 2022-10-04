@@ -88,4 +88,4 @@ ohdsiTutorial2022CohortDiagnostics::execute(
   extraLog = extraLog
 )
 
-CohortDiagnostics::createMergedResultsFile(dataFolder = outputFolder, overwrite = TRUE)
+# CohortDiagnostics::createMergedResultsFile(dataFolder = outputFolder, overwrite = TRUE)

@@ -188,7 +188,13 @@ getConnectionPool <- function(connectionDetails) {
 loadShinySettings <- function(configPath) {
   stopifnot(file.exists(configPath))
   shinySettings <- yaml::read_yaml(configPath)
-
+  
+  shinySettings$connectionDetails$dbms <- dbms
+  shinySettings$connectionDetails$server <- server
+  shinySettings$connectionDetails$port <- port
+  shinySettings$connectionDetails$user <- user
+  shinySettings$connectionDetails$password <- password
+  
   defaultValues <- list(
     resultsDatabaseSchema = c("main"),
     vocabularyDatabaseSchemas = c("main"),
