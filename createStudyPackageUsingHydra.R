@@ -16,9 +16,7 @@ description <- "Cohort diagnostics on Cohorts for OHDSI Tutorial."
 
 
 # atlas 1 - atlas.ohdsi.org
-baseUrl <- "https://atlas.ohdsi.org/WebAPI"
-ROhdsiWebApi::setAuthHeader(baseUrl = baseUrl, 
-                            authHeader = "Bearer ")
+baseUrl <- "http://tutorial5.us-east-1.elasticbeanstalk.com/WebAPI"
 
 cohortDefinitionsMetadata <- ROhdsiWebApi::getCohortDefinitionsMetaData(baseUrl = baseUrl)
 targetCohortIds <- cohortDefinitionsMetadata %>% 
@@ -44,38 +42,6 @@ for (i in (1:nrow(studyCohorts))) {
                 name = stringr::str_trim(stringr::str_squish(cohortDefinition$name)),
                 expression = cohortDefinition$expression
         )
-}
-
-
-
-
-# atlas 2
-baseUrl <- Sys.getenv("BaseUrl")
-ROhdsiWebApi::authorizeWebApi(baseUrl = baseUrl, authMethod = "windows")
-cohortDefinitionsMetadata <- ROhdsiWebApi::getCohortDefinitionsMetaData(baseUrl = baseUrl)
-targetCohortIds <- cohortDefinitionsMetadata %>% 
-  dplyr::filter(stringr::str_detect(string = .data$name, pattern = stringr::fixed("[OHDSI2022]"))) %>% 
-  dplyr::filter(stringr::str_detect(string = .data$name, pattern = stringr::fixed("COPY OF"), negate = TRUE)) %>% 
-  dplyr::pull(.data$id) %>% 
-  unique()
-
-studyCohorts <-  cohortDefinitionsMetadata %>% 
-  dplyr::filter(.data$id %in% targetCohortIds)
-
-j = i
-# compile them into a data table
-for (i in (1:nrow(studyCohorts))) {
-  cohortDefinition <-
-    ROhdsiWebApi::getCohortDefinition(cohortId = studyCohorts$id[[i]],
-                                      baseUrl = baseUrl)
-  cohortDefinitionsArray[[j+i]] <- list(
-    id = studyCohorts$id[[i]],
-    createdDate = studyCohorts$createdDate[[i]],
-    modifiedDate = studyCohorts$createdDate[[i]],
-    logicDescription = studyCohorts$description[[i]],
-    name = stringr::str_trim(stringr::str_squish(cohortDefinition$name)),
-    expression = cohortDefinition$expression
-  )
 }
 
 

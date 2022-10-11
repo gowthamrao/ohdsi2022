@@ -91,7 +91,7 @@ execute <- function(connectionDetails,
   if (!is.null(extraLog)) {
     ParallelLogger::logInfo(extraLog)
   }
-  
+
   ParallelLogger::logInfo("Creating cohorts")
 
   cohortTableNames <- CohortGenerator::getCohortTableNames(cohortTable = cohortTable)
@@ -155,7 +155,7 @@ execute <- function(connectionDetails,
     runInclusionStatistics = TRUE,
     runIncludedSourceConcepts = TRUE,
     runOrphanConcepts = TRUE,
-    runTimeSeries = TRUE,
+    runTimeSeries = FALSE,
     runVisitContext = TRUE,
     runBreakdownIndexEvents = TRUE,
     runIncidenceRate = TRUE,
@@ -181,7 +181,7 @@ execute <- function(connectionDetails,
       useConditionEraOverlap = TRUE,
       useConditionEraGroupStart = FALSE, # do not use because https://github.com/OHDSI/FeatureExtraction/issues/144
       useConditionEraGroupOverlap = TRUE,
-      useDrugExposure = TRUE, # leads to too many concept id
+      useDrugExposure = FALSE, # leads to too many concept id
       useDrugEraOverlap = FALSE,
       useDrugEraGroupStart = FALSE, # do not use because https://github.com/OHDSI/FeatureExtraction/issues/144
       useDrugEraGroupOverlap = TRUE,

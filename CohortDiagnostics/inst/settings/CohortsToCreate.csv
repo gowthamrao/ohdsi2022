@@ -1,9 +1,5 @@
 atlasId,cohortId,id,cohortName
-600,600,600,[OHDSI2022] New users of lisinopril with prior hypertension
-601,601,601,[OHDSI2022] New users of hydrochlorothiazide with prior hypertension
-602,602,602,[OHDSI2022] Angioedema events
-603,603,603,[OHDSI2022] Acute myocardial infarction events
-9900,9900,9900,[OHDSI2022] Hypertension
-9898,9898,9898,[OHDSI2022] New users of hydrochlorthiazide with no prior hypertension (in 365 days)
-9896,9896,9896,[OHDSI2022] New users of lisinopril with no prior hypertension (in 365 days)
-9899,9899,9899,[OHDSI2022] Acute myocardial infarction events (no inpatient limit)
+25,25,25,[OHDSI2022] Acute myocardial infarction events
+24,24,24,[OHDSI2022] Angioedema events
+23,23,23,[OHDSI2022] New users of hydrochlorothiazide with prior hypertension
+22,22,22,[OHDSI2022] New users of lisinopril with prior hypertension
